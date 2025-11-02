@@ -27,7 +27,7 @@
     "id": "107940",
     "version": "v1",
     "name": "Calvin Verdonk",
-    "club": "NEC Nijmegen",
+    "club": "Lille OSC",
     "image": "https://www.dropbox.com/scl/fi/eit1hqala03bncb1gtkfx/calvin.png?rlkey=qk6d2on7phad5vjc3sm0duqyw&st=fkgz64kr&raw=1",
     "zip_url": "https://www.dropbox.com/scl/fi/tj9td4h1ffkrl4eoav5tj/calvin.zip?rlkey=40e3nc7m0ypycme4rwjt9xpun&st=kd661mjn&dl=1"
   },
@@ -40,7 +40,7 @@
     "zip_url": "https://www.dropbox.com/scl/fi/xmx07fgsdj4tcgvdnctnc/teja.zip?rlkey=ic3j9brpzefraofk9genzurre&st=1wr123kt&dl=1"
   },
   {
-    "id": "37616",
+    "id": "7083",
     "version": "v1",
     "name": "Pablo Andrade",
     "club": "Persija Jakarta",
@@ -86,94 +86,7 @@
     "club": "Borneo FC",
     "image": "https://www.dropbox.com/scl/fi/ohgq824nsl0e3ka5baycc/Lilipaly.png?rlkey=o402u6doxqpnpix1him5e6di5&st=u0p2o70x&raw=1",
     "zip_url": "https://www.dropbox.com/scl/fi/vs3ty4525abu6spobgvyo/Lilipaly.zip?rlkey=nzae71vsorw32a3wcvxomgb5l&st=mpq0sog3&dl=1"
-  },
-  {
-    "id": "162114",
-    "version": "v1",
-    "name": "Lamine Yamal",
-    "club": "FC Barcelona",
-    "image": "https://www.dropbox.com/scl/fi/te0fi3nkbwoiof56y3prc/Yamal.png?rlkey=buf8j6hbhfmbblh84ocd217ge&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/6lw7e70d1c89q769p7fc2/Yamal.zip?rlkey=fr4rem92ds9ste6728ovuyir5&st=aar137wi&dl=1"
-  },
-  {
-    "id": "171620",
-    "version": "v1",
-    "name": "Raul Ascensio",
-    "club": "Real Madrid",
-    "image": "https://www.dropbox.com/scl/fi/95axg12gkoufmo9gbbv0e/Ascensio.png?rlkey=tvzjnitomu2z3haj83ff6gix0&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/4eb05qnc6qt615m0npcr9/RaulAscensio.zip?rlkey=luidg9gtcx3zr00px60qolmiu&st=6v5yeu2b&dl=1"
-  },
-  {
-    "id": "146650",
-    "version": "v1",
-    "name": "Milos Kerkez",
-    "club": "Liverpool",
-    "image": "https://www.dropbox.com/scl/fi/f4ed1g791i2y5tzbshfhl/Kerkez.png?rlkey=nzfzgupsjlgszg9r9hzwj09wa&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/2ubyexqdtszc6rl6p3ajw/MilosKerkez.zip?rlkey=weboext1hl2o5dp7gy8szswis&st=37sdjzkp&dl=1"
-  },
-  {
-    "id": "126570",
-    "version": "v1",
-    "name": "Samuele Ricci",
-    "club": "AC Milan",
-    "image": "https://www.dropbox.com/scl/fi/yckec09q6hwe3zculheu4/Ricci.png?rlkey=17oy0dqy8icp4h7spczh1rpbs&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/vo6808w3jxy0c2nxj1z3x/SamueleRicci.zip?rlkey=xkwwom47aix13s1vb8cgyo807&st=gtff179n&dl=1"
-  },
-  {
-    "id": "120439",
-    "version": "v1",
-    "name": "Christian Nordgaard",
-    "club": "Arsenal",
-    "image": "https://www.dropbox.com/scl/fi/4o9ugmpu7e3h1ta3dcmle/Nordgaard.png?rlkey=z44wqv3i9k75td07ef7dapasy&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/am1npzka83h7c3ezmv9ty/ChristianNordgaard.zip?rlkey=xt0tv8ci385usct0wgwz38348&st=hi89ogqb&dl=1"
-  },
-  {
-    "id": "142763",
-    "version": "v1",
-    "name": "Francisco Conceicao",
-    "club": "Juventus",
-    "image": "https://www.dropbox.com/scl/fi/1j4eplp4v64rhft7aonhm/ConceiCao.png?rlkey=v68sry803z090tgx7e53cbh1w&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/qfj7klhr2dmaiha679gvz/ConceiCao.zip?rlkey=bt944b0ivymou04tgz03huyhn&st=qhq9jwn8&dl=1"
-  },
-  {
-    "id": "122333",
-    "version": "v1",
-    "name": "Bryan Mbeumo",
-    "club": "Manchester United",
-    "image": "https://www.dropbox.com/scl/fi/hok2867gobb0gqvb6vad0/Mbeumo.png?rlkey=3dynz57tnrx7gk9r3kjidq8td&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/68erxq2wk0qwtgsqy7lo8/BryanMbeumo.zip?rlkey=g9y2w82jf8tqchvp6n5uvvrzb&st=ih96snuq&dl=1"
-  },
-  {
-    "id": "119531",
-    "version": "v1",
-    "name": "Matheus Cunha",
-    "club": "Manchester United",
-    "image": "https://www.dropbox.com/scl/fi/241ckhlu2346wwmziljqy/Cunha.png?rlkey=touektvy4ap2okf88lh3ngd6y&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/fdys0sfdsgsf2pnvqqslw/MatheusCunha.zip?rlkey=weu1ys8qs0wjy37yx6hochhez&st=pnfu0mc1&dl=1"
-  },
-  {
-    "id": "127787",
-    "version": "v1",
-    "name": "Joao Pedro",
-    "club": "Chelsea",
-    "image": "https://www.dropbox.com/scl/fi/uxpuus33u256fhea8giyz/JoaoPedro.png?rlkey=qewnxp2qt5o1831dpr880ixww&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/qes1qm25z91t5o44socww/JoaoPedro.zip?rlkey=so73iig2qh3siftpu7oak6sz0&st=a8q0u5vs&dl=1"
-  },
-  {
-    "id": "128463",
-    "version": "v1",
-    "name": "Jhon Duran",
-    "club": "Fenerbahce SK",
-    "image": "https://www.dropbox.com/scl/fi/m2ov7s5fimp8wfxi0e3gy/JhonDuran.png?rlkey=sl3fhj9t7onoje4s9kle55qw7&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/cis1a5upvrv49es4794ff/JhonDurran.zip?rlkey=p6rivb0e7u8pakqud0fegx1r8&st=gfb4vj1i&dl=1"
-  },
-  {
-    "id": "147337",
-    "version": "v1",
-    "name": "Jobe Bellingham",
-    "club": "Borrussia Dortmund",
-    "image": "https://www.dropbox.com/scl/fi/7328ymq9oaxox5qkznjbr/Jobe.png?rlkey=i2afcmn7nc0o4l1trqabq5oro&raw=1",
-    "zip_url": "https://www.dropbox.com/scl/fi/e9iomijnqhxy2vwglzclg/Jobe.zip?rlkey=04awbzndwk0j2xdygbxab2y0a&st=mnnhvm6d&dl=1"
   }
 ]
+
 
