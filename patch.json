@@ -1,8 +1,20 @@
 {
   "links": [
     {
-      "name": "Part-1 (PES2021)",
+      "name": "Part 4 (PES2021)",
       "url": "https://drive.google.com/uc?export=download&id=1_sH8fNDYoZJJtbw4sYxfKVhqOU1EP3Lb"
+    },
+    { 
+      "name": "Part 5 (PES2021)", 
+      "url": "https://drive.google.com/uc?export=download&id=1Q_gHfXxzECKiCgQQ2kV5uHN6td6Amy84" 
+    },
+    { 
+      "name": "Part 6 (PES2021)", 
+      "url": "https://drive.google.com/uc?export=download&id=1nciqzAjBhanBnDdko4HxQJEtMsMu35PM" 
+    },
+    { 
+      "name": "Part 8 (PES2021)", 
+      "url": "https://drive.google.com/uc?export=download&id=1pkwjnyPqQkgI726rQ_25M-_3VRL2U-TS" 
     }
   ]
 }
