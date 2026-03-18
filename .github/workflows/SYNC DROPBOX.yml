@@ -1,0 +1,29 @@
+name: Generate Face Library
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python package
+        run: pip install dropbox
+
+      - name: Run script
+        run: python generate_json.py
+        env:
+          DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
+
+      - name: Commit JSON
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@mail.com"
+          git add facelibrary18.json
+          git commit -m "update json" || echo "no change"
+          git push
