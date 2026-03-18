@@ -4,7 +4,7 @@ import json
 
 dbx = dropbox.Dropbox(os.environ["DROPBOX_TOKEN"])
 
-ROOT_FOLDER = "/Face Library 18"
+ROOT_FOLDER = "/FaceLibrary18"
 result = []
 
 def get_or_create_shared_link(path):
