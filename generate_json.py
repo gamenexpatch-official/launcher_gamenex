@@ -2,6 +2,9 @@ import dropbox
 import os
 import json
 
+# Mengambil token dari Environment Variables (seperti di GitHub Actions)
+DROPBOX_TOKEN = os.environ["DROPBOX_TOKEN"]
+
 # Inisialisasi Dropbox
 dbx = dropbox.Dropbox(DROPBOX_TOKEN)
 
