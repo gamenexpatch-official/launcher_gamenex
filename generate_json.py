@@ -2,20 +2,8 @@ import dropbox
 import os
 import json
 
-# Mengambil token dari Environment Variables (seperti di GitHub Actions)
-# Jika ingin test di PC sendiri, ubah "" menjadi token Anda.
-DROPBOX_TOKEN = os.environ.get("DROPBOX_TOKEN", "")
+dbx = dropbox.Dropbox(os.environ["DROPBOX_TOKEN"])
 
-if not DROPBOX_TOKEN:
-    print("❌ ERROR: DROPBOX_TOKEN kosong! Tidak bisa mengakses Dropbox.")
-    print("Pastikan Anda menjalankan script ini di Github Actions, ATAU masukkan text token Anda langsung di atas untuk testing lokal.")
-    exit(1)
-
-# Inisialisasi Dropbox
-dbx = dropbox.Dropbox(DROPBOX_TOKEN)
-
-# Ganti dengan path folder jika menggunakan aplikasi tipe "Full Dropbox" (misal: "/Apps/FaceLibrary18").
-# Jika menggunakan tipe "App Folder", biarkan "" (string kosong).
 ROOT_FOLDER = ""
 result = []
 
@@ -27,7 +15,7 @@ def get_or_create_shared_link(path):
         else:
             return dbx.sharing_create_shared_link_with_settings(path).url
     except Exception as e:
-        print(f"Error getting link for {path}:", e)
+        print("Error:", e)
         return None
 
 def fix_image(url):
@@ -36,75 +24,49 @@ def fix_image(url):
 def fix_zip(url):
     return url.replace("?dl=0", "?dl=1")
 
-# ambil semua folder di direktori root yang dituju
-try:
-    print(f"Mengakses Dropbox folder: '{ROOT_FOLDER if ROOT_FOLDER else '/'}'...")
-    res = dbx.files_list_folder(ROOT_FOLDER)
-except Exception as e:
-    print(f"Error mengakses root folder: {e}")
-    res = None
+# ambil semua folder player
+res = dbx.files_list_folder(ROOT_FOLDER)
 
-if res:
-    for folder in res.entries:
-        if isinstance(folder, dropbox.files.FolderMetadata):
-            parts = folder.name.split("_")
+for folder in res.entries:
+    if isinstance(folder, dropbox.files.FolderMetadata):
 
-            # validasi format nama folder (contoh: 47787_Joao Cancelo_Barcelona)
-            if len(parts) < 2:
-                continue
+        parts = folder.name.split("_")
 
-            player_id = parts[0]
-            player_name = parts[1]
-            club = parts[2] if len(parts) > 2 else "Unknown"
+        # validasi format nama
+        if len(parts) < 2:
+            continue
 
-            # folder.path_lower otomatis mengarah ke absolute path yang benar di Dropbox
-            try:
-                files = dbx.files_list_folder(folder.path_lower)
-            except Exception as e:
-                print(f"Error mengakses isi folder {folder.name}: {e}")
-                continue
+        player_id = parts[0]
+        player_name = parts[1]
+        club = parts[2] if len(parts) > 2 else "Unknown"
 
-            image_link = None
-            zip_link = None
+        folder_path = f"{ROOT_FOLDER}/{folder.name}"
+        files = dbx.files_list_folder(folder_path)
 
-            for f in files.entries:
-                if isinstance(f, dropbox.files.FileMetadata):
-                    
-                    # Jika itu adalah file PNG/JPG - ambil metadata link
-                    if f.name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
-                        print(f"Mendapatkan link gambar untuk: {f.name}")
-                        link = get_or_create_shared_link(f.path_lower)
-                        if link:
-                            image_link = fix_image(link)
-                            
-                    # Jika itu adalah file ZIP/RAR/7z - ambil metadata link
-                    elif f.name.lower().endswith((".zip", ".rar", ".7z")):
-                        print(f"Mendapatkan link zip/rar untuk: {f.name}")
-                        link = get_or_create_shared_link(f.path_lower)
-                        if link:
-                            zip_link = fix_zip(link)
-                        else:
-                            print(f"❌ Gagal mendapatkan link untuk file: {f.name}")
-                    else:
-                        print(f"ℹ️ Mengabaikan file dengan ekstensi yang tidak dikenali: {f.name}")
+        image_link = None
+        zip_link = None
 
-            # Memasukkan data ke list result
-            if image_link and zip_link:
-                result.append({
-                    "id": player_id,
-                    "version": "v1",
-                    "name": player_name,
-                    "club": club,
-                    "image": image_link,
-                    "zip": zip_link  # Diubah menjadi "zip" dari sebelumnya "zip_url"
-                })
-                print(f"✅ Berhasil memproses: {player_name}\n")
-            else:
-                print(f"⚠️ Melewati {player_name}: Gambar atau ZIP tidak ditemukan secara lengkap.\n")
+        for f in files.entries:
+            if isinstance(f, dropbox.files.FileMetadata):
 
-# simpan JSON output
-output_file = "facelibrary18.json"
-with open(output_file, "w") as f:
-    json.dump(result, f, indent=4)
+                link = get_or_create_shared_link(f.path_lower)
 
-print(f"Selesai! Data diekstrak ke dalam '{output_file}'")
+                if f.name.lower().endswith(".png"):
+                    image_link = fix_image(link)
+
+                elif f.name.lower().endswith(".zip"):
+                    zip_link = fix_zip(link)
+
+        if image_link and zip_link:
+            result.append({
+                "id": player_id,
+                "version": "v1",
+                "name": player_name,
+                "club": club,
+                "image": image_link,
+                "zip_url": zip_link
+            })
+
+# simpan JSON
+with open("facelibrary18.json", "w") as f:
+    json.dump(result, f, indent=2)
