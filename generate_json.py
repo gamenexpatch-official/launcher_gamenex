@@ -3,7 +3,13 @@ import os
 import json
 
 # Mengambil token dari Environment Variables (seperti di GitHub Actions)
-DROPBOX_TOKEN = os.environ["DROPBOX_TOKEN"]
+# Jika ingin test di PC sendiri, ubah "" menjadi token Anda.
+DROPBOX_TOKEN = os.environ.get("DROPBOX_TOKEN", "")
+
+if not DROPBOX_TOKEN:
+    print("❌ ERROR: DROPBOX_TOKEN kosong! Tidak bisa mengakses Dropbox.")
+    print("Pastikan Anda menjalankan script ini di Github Actions, ATAU masukkan text token Anda langsung di atas untuk testing lokal.")
+    exit(1)
 
 # Inisialisasi Dropbox
 dbx = dropbox.Dropbox(DROPBOX_TOKEN)
