@@ -65,18 +65,22 @@ if res:
                 if isinstance(f, dropbox.files.FileMetadata):
                     
                     # Jika itu adalah file PNG/JPG - ambil metadata link
-                    if f.name.lower().endswith((".png", ".jpg", ".jpeg")):
+                    if f.name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
                         print(f"Mendapatkan link gambar untuk: {f.name}")
                         link = get_or_create_shared_link(f.path_lower)
                         if link:
                             image_link = fix_image(link)
                             
-                    # Jika itu adalah file ZIP - ambil metadata link
-                    elif f.name.lower().endswith(".zip"):
-                        print(f"Mendapatkan link zip untuk: {f.name}")
+                    # Jika itu adalah file ZIP/RAR/7z - ambil metadata link
+                    elif f.name.lower().endswith((".zip", ".rar", ".7z")):
+                        print(f"Mendapatkan link zip/rar untuk: {f.name}")
                         link = get_or_create_shared_link(f.path_lower)
                         if link:
                             zip_link = fix_zip(link)
+                        else:
+                            print(f"❌ Gagal mendapatkan link untuk file: {f.name}")
+                    else:
+                        print(f"ℹ️ Mengabaikan file dengan ekstensi yang tidak dikenali: {f.name}")
 
             # Memasukkan data ke list result
             if image_link and zip_link:
