@@ -2,11 +2,17 @@ import os
 import json
 import dropbox
 
-ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
+APP_KEY = os.getenv("DROPBOX_APP_KEY")
+APP_SECRET = os.getenv("DROPBOX_APP_SECRET")
+REFRESH_TOKEN = os.getenv("DROPBOX_REFRESH_TOKEN")
+
+dbx = dropbox.Dropbox(
+    oauth2_refresh_token=REFRESH_TOKEN,
+    app_key=APP_KEY,
+    app_secret=APP_SECRET
+)
 BASE_PATH = ""
 OUTPUT_FILE = "facelibrary18.json"
-
-dbx = dropbox.Dropbox(ACCESS_TOKEN)
 
 def get_or_create_shared_link(path):
     try:
@@ -56,7 +62,10 @@ def main():
 
         player_id, name, club = parsed
 
-        files = dbx.files_list_folder(folder_path).entries
+        try:
+            files = dbx.files_list_folder(folder_path, recursive=True).entries
+        except:
+            files = []
 
         image_url = ""
         zip_url = ""
