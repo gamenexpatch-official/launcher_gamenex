@@ -44,13 +44,15 @@ if res:
         if isinstance(folder, dropbox.files.FolderMetadata):
             parts = folder.name.split("_")
 
-            # validasi format nama folder (contoh: 47787_Joao Cancelo_Barcelona)
-            if len(parts) < 2:
-                continue
+            player_id = None
+            player_name = folder.name
+            club = "Unknown"
 
-            player_id = parts[0]
-            player_name = parts[1]
-            club = parts[2] if len(parts) > 2 else "Unknown"
+            # validasi format nama folder (contoh: 47787_Joao Cancelo_Barcelona)
+            if len(parts) >= 2:
+                player_id = parts[0]
+                player_name = parts[1]
+                club = parts[2] if len(parts) > 2 else "Unknown"
 
             # folder.path_lower otomatis mengarah ke absolute path yang benar di Dropbox
             try:
@@ -63,7 +65,11 @@ if res:
             zip_link = None
 
             for f in files.entries:
-                if isinstance(f, dropbox.files.FileMetadata):
+                if isinstance(f, dropbox.files.FolderMetadata):
+                    # Jika menggunakan format folder "Nama Pemain", ID bisa diambil dari nama subfolder (angka)
+                    if f.name.isdigit():
+                        player_id = f.name
+                elif isinstance(f, dropbox.files.FileMetadata):
                     
                     # Jika itu adalah file PNG/JPG - ambil metadata link
                     if f.name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
@@ -84,18 +90,22 @@ if res:
                         print(f"ℹ️ Mengabaikan file dengan ekstensi yang tidak dikenali: {f.name}")
 
             # Memasukkan data ke list result
-            if image_link and zip_link:
+            if player_id and image_link and zip_link:
                 result.append({
                     "id": player_id,
                     "version": "v1",
                     "name": player_name,
                     "club": club,
                     "image": image_link,
-                    "zip": zip_link  # Diubah menjadi "zip" dari sebelumnya "zip_url"
+                    "zip": zip_link
                 })
                 print(f"✅ Berhasil memproses: {player_name}\n")
             else:
-                print(f"⚠️ Melewati {player_name}: Gambar atau ZIP tidak ditemukan secara lengkap.\n")
+                missing = []
+                if not player_id: missing.append("ID Pemain")
+                if not image_link: missing.append("Gambar")
+                if not zip_link: missing.append("ZIP")
+                print(f"⚠️ Melewati {player_name}: Data tidak lengkap ({', '.join(missing)}).\n")
 
 # simpan JSON output
 output_file = "facelibrary18.json"
