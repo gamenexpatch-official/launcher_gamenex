@@ -3,7 +3,7 @@ import json
 import dropbox
 
 ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
-BASE_PATH = "/Apps/FaceLibrary18"
+BASE_PATH = ""
 OUTPUT_FILE = "facelibrary18.json"
 
 dbx = dropbox.Dropbox(ACCESS_TOKEN)
