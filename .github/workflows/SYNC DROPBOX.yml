@@ -3,7 +3,7 @@ name: Generate Face Library
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/1 * * * *"
 
 jobs:
   build:
