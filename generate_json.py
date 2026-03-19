@@ -25,11 +25,37 @@ def get_or_create_shared_link(path):
         return None
 
 def fix_image(url):
-    # Dropbox versi baru memakai format ?rlkey=...&dl=0 
-    return url.replace("?dl=0", "?raw=1").replace("&dl=0", "&raw=1")
+    return url.replace("?dl=0", "?dl=1").replace("&dl=0", "&dl=1")
 
 def fix_zip(url):
     return url.replace("?dl=0", "?dl=1").replace("&dl=0", "&dl=1")
+
+# Coba temukan direktori root secara otomatis (App Folder vs Full Dropbox)
+def find_root_folder(dbx):
+    try:
+        res = dbx.files_list_folder("")
+        for e in res.entries:
+            if isinstance(e, dropbox.files.FolderMetadata) and len(e.name.split("_")) >= 2:
+                print("Terdeteksi tipe App Folder (folder pemain ada di root).")
+                return ""
+                
+        try:
+            dbx.files_get_metadata("/Apps/FaceLibrary18")
+            print("Terdeteksi tipe Full Dropbox. Menggunakan '/Apps/FaceLibrary18'.")
+            return "/Apps/FaceLibrary18"
+        except:
+            pass
+
+        try:
+            dbx.files_get_metadata("/FaceLibrary18")
+            return "/FaceLibrary18"
+        except:
+            pass
+    except Exception as e:
+        pass
+    return ""
+
+ROOT_FOLDER = find_root_folder(dbx)
 
 # ambil semua folder di direktori root yang dituju
 try:
@@ -56,7 +82,8 @@ if res:
 
             # folder.path_lower otomatis mengarah ke absolute path yang benar di Dropbox
             try:
-                files = dbx.files_list_folder(folder.path_lower)
+                # Gunakan recursive=True agar bisa mencari di dalam folder ID juga
+                files = dbx.files_list_folder(folder.path_lower, recursive=True)
             except Exception as e:
                 print(f"Error mengakses isi folder {folder.name}: {e}")
                 continue
@@ -97,7 +124,7 @@ if res:
                     "name": player_name,
                     "club": club,
                     "image": image_link,
-                    "zip": zip_link
+                    "zip_url": zip_link
                 })
                 print(f"✅ Berhasil memproses: {player_name}\n")
             else:
@@ -105,6 +132,16 @@ if res:
                 if not player_id: missing.append("ID Pemain")
                 if not image_link: missing.append("Gambar")
                 if not zip_link: missing.append("ZIP")
+                
+                # Masukkan debug info ke JSON agar terlihat di GitHub hasil commit-nya
+                result.append({
+                    "_error": "Data tidak lengkap",
+                    "_missing": missing,
+                    "name": player_name,
+                    "found_id": player_id,
+                    "found_image": image_link if image_link else None,
+                    "found_zip": zip_link if zip_link else None
+                })
                 print(f"⚠️ Melewati {player_name}: Data tidak lengkap ({', '.join(missing)}).\n")
 
 # simpan JSON output
