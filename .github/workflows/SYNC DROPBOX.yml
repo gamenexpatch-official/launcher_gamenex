@@ -10,19 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # Checkout repo
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: 🚀 Run Script
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install dependencies (optional)
+      - name: Install Requirements
+        run: |
+          pip install -r requirements.txt || true
+
+      # Run script
+      - name: Run Script
         env:
-         DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
-         DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
-         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
-        run: python generate_json.py
+          DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+          DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        run: |
+          python generate_json.py
 
+      # Commit changes
       - name: Commit JSON
         run: |
           git config --global user.name "bot"
           git config --global user.email "bot@mail.com"
+
           git add facelibrary18.json
-          git commit -m "update json" || echo "no change"
+
+          git commit -m "update json" || echo "no changes"
+
           git push
