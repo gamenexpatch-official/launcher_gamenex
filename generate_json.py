@@ -20,11 +20,28 @@ dbx = dropbox.Dropbox(
 # =========================
 # CONFIG
 # =========================
-# Jika app Dropbox menggunakan "App Folder",
-# biarkan kosong ""
 BASE_PATH = ""
 
 OUTPUT_FILE = "facelibrary18.json"
+
+# =========================
+# FIX DROPBOX DIRECT LINK
+# =========================
+def fix_dropbox_link(url):
+
+    # ubah dl=0 jadi dl=1
+    if "dl=0" in url:
+        url = url.replace("dl=0", "dl=1")
+
+    # jika belum ada dl parameter
+    elif "dl=1" not in url:
+
+        if "?" in url:
+            url += "&dl=1"
+        else:
+            url += "?dl=1"
+
+    return url
 
 # =========================
 # CREATE / GET SHARE LINK
@@ -32,46 +49,37 @@ OUTPUT_FILE = "facelibrary18.json"
 def get_or_create_shared_link(path):
 
     try:
-        links = dbx.sharing_list_shared_links(path=path).links
+
+        links = dbx.sharing_list_shared_links(
+            path=path
+        ).links
 
         if links:
-            return links[0].url.replace("?dl=0", "?dl=1")
+
+            return fix_dropbox_link(
+                links[0].url
+            )
 
     except Exception as e:
+
         print(f"⚠️ Shared link check failed: {e}")
 
     try:
-        link = dbx.sharing_create_shared_link_with_settings(path)
 
-        return link.url.replace("?dl=0", "?dl=1")
+        link = dbx.sharing_create_shared_link_with_settings(
+            path
+        )
+
+        return fix_dropbox_link(
+            link.url
+        )
 
     except Exception as e:
+
         print(f"❌ Failed create shared link: {path}")
         print(e)
 
         return ""
-
-# =========================
-# PARSE FOLDER NAME
-# FORMAT:
-# 47787_Joao Cancelo_Barcelona
-# =========================
-def parse_folder(folder_name):
-
-    parts = folder_name.split("_")
-
-    if len(parts) < 3:
-        return None
-
-    player_id = parts[0].strip()
-
-    if not player_id.isdigit():
-        return None
-
-    player_name = parts[1].replace("_", " ").strip()
-    club_name = " ".join(parts[2:]).replace("_", " ").strip()
-
-    return player_id, player_name, club_name
 
 # =========================
 # GET ALL ENTRIES
@@ -81,15 +89,21 @@ def get_all_entries(path=""):
     entries = []
 
     try:
+
         result = dbx.files_list_folder(path)
 
         entries.extend(result.entries)
 
         while result.has_more:
-            result = dbx.files_list_folder_continue(result.cursor)
+
+            result = dbx.files_list_folder_continue(
+                result.cursor
+            )
+
             entries.extend(result.entries)
 
     except Exception as e:
+
         print(f"❌ Failed read Dropbox folder: {e}")
 
     return entries
@@ -103,7 +117,6 @@ def git_commit_push():
 
         print("\n🚀 START AUTO GITHUB PUSH...")
 
-        # CONFIG GIT BOT
         subprocess.run(
             ["git", "config", "user.name", "gamenex-bot"],
             check=True
@@ -114,35 +127,31 @@ def git_commit_push():
             check=True
         )
 
-        # GIT ADD
         subprocess.run(
             ["git", "add", OUTPUT_FILE],
             check=True
         )
 
-        # CHECK CHANGES
         result = subprocess.run(
             ["git", "diff", "--cached", "--quiet"]
         )
 
-        # NO CHANGES
+        # tidak ada perubahan
         if result.returncode == 0:
+
             print("ℹ️ No changes detected")
             return
 
-        # COMMIT MESSAGE
         commit_msg = (
             f"auto update facelibrary18 "
             f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
 
-        # COMMIT
         subprocess.run(
             ["git", "commit", "-m", commit_msg],
             check=True
         )
 
-        # PUSH
         subprocess.run(
             ["git", "push"],
             check=True
@@ -169,15 +178,22 @@ def main():
 
     if os.path.exists(OUTPUT_FILE):
 
-        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+        with open(
+            OUTPUT_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
 
             try:
+
                 data = json.load(f)
 
                 for item in data:
+
                     old_players[item["id"]] = item
 
             except:
+
                 pass
 
     print(f"📦 OLD DATA: {len(old_players)}")
@@ -187,11 +203,17 @@ def main():
     # =========================
     entries = get_all_entries(BASE_PATH)
 
-    print(f"📂 TOTAL DROPBOX FOLDERS: {len(entries)}\n")
+    print(
+        f"📂 TOTAL DROPBOX FOLDERS: {len(entries)}\n"
+    )
 
     for entry in entries:
 
-        if not isinstance(entry, dropbox.files.FolderMetadata):
+        # hanya folder
+        if not isinstance(
+            entry,
+            dropbox.files.FolderMetadata
+        ):
             continue
 
         folder_name = entry.name
@@ -205,12 +227,14 @@ def main():
         parts = folder_name.split("_")
 
         if len(parts) < 2:
+
             print("⚠️ INVALID FOLDER")
             continue
 
         player_id = parts[0].strip()
 
         if not player_id.isdigit():
+
             print("⚠️ INVALID ID")
             continue
 
@@ -219,7 +243,10 @@ def main():
         club_name = ""
 
         if len(parts) >= 3:
-            club_name = " ".join(parts[2:]).strip()
+
+            club_name = " ".join(
+                parts[2:]
+            ).strip()
 
         # =========================
         # READ FILES
@@ -231,7 +258,10 @@ def main():
 
         for f in files:
 
-            if not isinstance(f, dropbox.files.FileMetadata):
+            if not isinstance(
+                f,
+                dropbox.files.FileMetadata
+            ):
                 continue
 
             file_name = f.name.lower()
@@ -245,12 +275,16 @@ def main():
                 or file_name.endswith(".jpeg")
             ):
 
-                image_url = get_or_create_shared_link(f.path_lower)
+                image_url = get_or_create_shared_link(
+                    f.path_lower
+                )
 
             # ZIP
             elif file_name.endswith(".zip"):
 
-                zip_url = get_or_create_shared_link(f.path_lower)
+                zip_url = get_or_create_shared_link(
+                    f.path_lower
+                )
 
         # =========================
         # SKIP INVALID
@@ -264,12 +298,16 @@ def main():
         # UPDATE / ADD
         # =========================
         old_players[player_id] = {
+
             "id": player_id,
             "version": "v1",
             "name": player_name,
             "club": club_name,
             "image": image_url,
-            "zip_url": zip_url
+            "zip_url": zip_url,
+            "updated_at": datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
         }
 
         print(f"✅ UPDATED: {player_id}")
@@ -277,13 +315,23 @@ def main():
     # =========================
     # CONVERT TO LIST
     # =========================
-    players = list(old_players.values())
+    players = list(
+        old_players.values()
+    )
 
     # SORT
-    players.sort(key=lambda x: int(x["id"]))
+    players.sort(
+        key=lambda x: int(x["id"])
+    )
 
-    # SAVE
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    # =========================
+    # SAVE JSON
+    # =========================
+    with open(
+        OUTPUT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
 
         json.dump(
             players,
@@ -298,11 +346,10 @@ def main():
     print("🚀 UPDATE COMPLETE!")
     print("===================================")
 
-    
-# =========================
-# AUTO PUSH GITHUB
-# =========================
-git_commit_push()
+    # =========================
+    # AUTO PUSH
+    # =========================
+    git_commit_push()
 
 # =========================
 # RUN
