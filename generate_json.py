@@ -1,6 +1,8 @@
 import os
 import json
 import dropbox
+import subprocess
+from datetime import datetime
 
 # =========================
 # DROPBOX CONFIG
@@ -28,6 +30,7 @@ OUTPUT_FILE = "facelibrary18.json"
 # CREATE / GET SHARE LINK
 # =========================
 def get_or_create_shared_link(path):
+
     try:
         links = dbx.sharing_list_shared_links(path=path).links
 
@@ -54,6 +57,7 @@ def get_or_create_shared_link(path):
 # 47787_Joao Cancelo_Barcelona
 # =========================
 def parse_folder(folder_name):
+
     parts = folder_name.split("_")
 
     if len(parts) < 3:
@@ -70,9 +74,10 @@ def parse_folder(folder_name):
     return player_id, player_name, club_name
 
 # =========================
-# GET ALL FOLDERS (PAGINATION)
+# GET ALL ENTRIES
 # =========================
 def get_all_entries(path=""):
+
     entries = []
 
     try:
@@ -90,10 +95,73 @@ def get_all_entries(path=""):
     return entries
 
 # =========================
+# AUTO GIT COMMIT PUSH
+# =========================
+def git_commit_push():
+
+    try:
+
+        print("\n🚀 START AUTO GITHUB PUSH...")
+
+        # CONFIG GIT BOT
+        subprocess.run(
+            ["git", "config", "user.name", "gamenex-bot"],
+            check=True
+        )
+
+        subprocess.run(
+            ["git", "config", "user.email", "bot@gamenex.com"],
+            check=True
+        )
+
+        # GIT ADD
+        subprocess.run(
+            ["git", "add", OUTPUT_FILE],
+            check=True
+        )
+
+        # CHECK CHANGES
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--quiet"]
+        )
+
+        # NO CHANGES
+        if result.returncode == 0:
+            print("ℹ️ No changes detected")
+            return
+
+        # COMMIT MESSAGE
+        commit_msg = (
+            f"auto update facelibrary18 "
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+
+        # COMMIT
+        subprocess.run(
+            ["git", "commit", "-m", commit_msg],
+            check=True
+        )
+
+        # PUSH
+        subprocess.run(
+            ["git", "push"],
+            check=True
+        )
+
+        print("✅ GITHUB PUSH SUCCESS!")
+
+    except subprocess.CalledProcessError as e:
+
+        print("❌ GITHUB PUSH FAILED")
+        print(e)
+
+# =========================
 # MAIN
 # =========================
 def main():
+
     players = []
+    existing_ids = set()
 
     print("🚀 START SCAN DROPBOX...\n")
 
@@ -103,7 +171,7 @@ def main():
 
     for entry in entries:
 
-        # hanya folder
+        # HANYA FOLDER
         if not isinstance(entry, dropbox.files.FolderMetadata):
             continue
 
@@ -119,6 +187,13 @@ def main():
             continue
 
         player_id, player_name, club_name = parsed
+
+        # DUPLICATE CHECK
+        if player_id in existing_ids:
+            print(f"⚠️ Duplicate ID: {player_id}")
+            continue
+
+        existing_ids.add(player_id)
 
         # =========================
         # GET FILES INSIDE FOLDER
@@ -143,16 +218,18 @@ def main():
 
             print(f"   📄 {file_name}")
 
-            # PNG / JPG IMAGE
+            # IMAGE
             if (
                 file_name.endswith(".png")
                 or file_name.endswith(".jpg")
                 or file_name.endswith(".jpeg")
             ):
+
                 image_url = get_or_create_shared_link(f.path_lower)
 
-            # ZIP FILE
+            # ZIP
             elif file_name.endswith(".zip"):
+
                 zip_url = get_or_create_shared_link(f.path_lower)
 
         # =========================
@@ -191,6 +268,7 @@ def main():
     # SAVE JSON
     # =========================
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+
         json.dump(
             players,
             f,
@@ -198,11 +276,16 @@ def main():
             ensure_ascii=False
         )
 
-    print("===================================")
+    print("\n===================================")
     print(f"✅ TOTAL PLAYER: {len(players)}")
     print(f"✅ JSON SAVED: {OUTPUT_FILE}")
     print("🚀 AUTO DROPBOX SYNC COMPLETE!")
     print("===================================")
+
+    # =========================
+    # AUTO PUSH GITHUB
+    # =========================
+    git_commit_push()
 
 # =========================
 # RUN
