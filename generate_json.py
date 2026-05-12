@@ -160,18 +160,37 @@ def git_commit_push():
 # =========================
 def main():
 
-    players = []
-    existing_ids = set()
-
     print("🚀 START SCAN DROPBOX...\n")
 
+    # =========================
+    # LOAD OLD JSON
+    # =========================
+    old_players = {}
+
+    if os.path.exists(OUTPUT_FILE):
+
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+
+            try:
+                data = json.load(f)
+
+                for item in data:
+                    old_players[item["id"]] = item
+
+            except:
+                pass
+
+    print(f"📦 OLD DATA: {len(old_players)}")
+
+    # =========================
+    # SCAN DROPBOX
+    # =========================
     entries = get_all_entries(BASE_PATH)
 
-    print(f"📂 Total entries found: {len(entries)}\n")
+    print(f"📂 TOTAL DROPBOX FOLDERS: {len(entries)}\n")
 
     for entry in entries:
 
-        # HANYA FOLDER
         if not isinstance(entry, dropbox.files.FolderMetadata):
             continue
 
@@ -180,31 +199,32 @@ def main():
 
         print(f"📂 FOUND: {folder_name}")
 
-        parsed = parse_folder(folder_name)
+        # =========================
+        # FLEXIBLE PARSE
+        # =========================
+        parts = folder_name.split("_")
 
-        if not parsed:
-            print(f"⚠️ Skip invalid folder format: {folder_name}\n")
+        if len(parts) < 2:
+            print("⚠️ INVALID FOLDER")
             continue
 
-        player_id, player_name, club_name = parsed
+        player_id = parts[0].strip()
 
-        # DUPLICATE CHECK
-        if player_id in existing_ids:
-            print(f"⚠️ Duplicate ID: {player_id}")
+        if not player_id.isdigit():
+            print("⚠️ INVALID ID")
             continue
 
-        existing_ids.add(player_id)
+        player_name = parts[1].strip()
+
+        club_name = ""
+
+        if len(parts) >= 3:
+            club_name = " ".join(parts[2:]).strip()
 
         # =========================
-        # GET FILES INSIDE FOLDER
+        # READ FILES
         # =========================
-        try:
-            files = get_all_entries(folder_path)
-
-        except Exception as e:
-            print(f"❌ Failed open folder: {folder_name}")
-            print(e)
-            continue
+        files = get_all_entries(folder_path)
 
         image_url = ""
         zip_url = ""
@@ -233,40 +253,36 @@ def main():
                 zip_url = get_or_create_shared_link(f.path_lower)
 
         # =========================
-        # VALIDATION
+        # SKIP INVALID
         # =========================
-        if not image_url:
-            print(f"⚠️ Missing image file in: {folder_name}")
-
-        if not zip_url:
-            print(f"⚠️ Missing zip file in: {folder_name}")
-
         if not image_url or not zip_url:
-            print("⏭️ Skip folder\n")
+
+            print("⏭️ Missing image/zip")
             continue
 
         # =========================
-        # ADD PLAYER
+        # UPDATE / ADD
         # =========================
-        players.append({
+        old_players[player_id] = {
             "id": player_id,
             "version": "v1",
             "name": player_name,
             "club": club_name,
             "image": image_url,
             "zip_url": zip_url
-        })
+        }
 
-        print(f"✅ SUCCESS: {player_id} - {player_name}\n")
+        print(f"✅ UPDATED: {player_id}")
 
     # =========================
-    # SORT DATA
+    # CONVERT TO LIST
     # =========================
+    players = list(old_players.values())
+
+    # SORT
     players.sort(key=lambda x: int(x["id"]))
 
-    # =========================
-    # SAVE JSON
-    # =========================
+    # SAVE
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
 
         json.dump(
@@ -279,13 +295,14 @@ def main():
     print("\n===================================")
     print(f"✅ TOTAL PLAYER: {len(players)}")
     print(f"✅ JSON SAVED: {OUTPUT_FILE}")
-    print("🚀 AUTO DROPBOX SYNC COMPLETE!")
+    print("🚀 UPDATE COMPLETE!")
     print("===================================")
 
-    # =========================
-    # AUTO PUSH GITHUB
-    # =========================
-    git_commit_push()
+    
+# =========================
+# AUTO PUSH GITHUB
+# =========================
+git_commit_push()
 
 # =========================
 # RUN
