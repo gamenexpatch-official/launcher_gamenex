@@ -310,6 +310,38 @@
     "club": "Arema FC",
     "image": "https://www.dropbox.com/scl/fi/yr2bc5e0auncgacujk040/Pakpahan.png?rlkey=8bis9amhqpinzv2l0heiexzs4&raw=1",
     "zip_url": "https://www.dropbox.com/scl/fi/etsu10c8xylu04yiqsmyl/90907.zip?rlkey=nvf8sym3efu2wtbveshvgagb5&dl=1"
+  },
+  {
+    "id": "133949",
+    "version": "v1",
+    "name": "Toni Firmansyah",
+    "club": "Persebaya Surabaya",
+    "image": "https://www.dropbox.com/scl/fi/2s5qkt29j6g5i6kmrb3jo/ToniF.png?rlkey=x7az101pp6nyqojzb3owmaksq&raw=1",
+    "zip_url": "https://www.dropbox.com/scl/fi/q1zjeqjau2fbgvowbyti1/AdiSatryo.zip?rlkey=ig8dv0ihwrnbd8qm4sv3poxm5&dl=1"
+  },
+  {
+    "id": "140083",
+    "version": "v1",
+    "name": "Koldo Obieta",
+    "club": "Borneo FC",
+    "image": "https://www.dropbox.com/scl/fi/fgaquk1aq0g9lptakwj1q/Obieta.png?rlkey=zgbti2m1lffy41zchopnpepzx&raw=1",
+    "zip_url": "https://www.dropbox.com/scl/fi/ufye1q670x5yiqccujuxe/133949.zip?rlkey=61rhs7kge3k95z98460ghgpdq&dl=1"
+  },
+  {
+    "id": "63490",
+    "version": "v1",
+    "name": "Thom Haye",
+    "club": "Persib Bandung",
+    "image": "https://www.dropbox.com/scl/fi/ff8uijncw1urq9xpzb919/ThomHaye.png?rlkey=rtyiz9ntt85o7askn7rc56dcq&raw=1",
+    "zip_url": "https://www.dropbox.com/scl/fi/y4mivj666ihf3bmu4dbnr/140083.zip?rlkey=ncd9h0mmhc2pycapzk02ggo5n&dl=1"
+  },
+  {
+    "id": "90907",
+    "version": "v1",
+    "name": "Alfreanda Dewangga",
+    "club": "Persib Bandung",
+    "image": "https://www.dropbox.com/scl/fi/j41o91j4copbcinx66ufv/Dewangga.png?rlkey=py4yee9n6c819q2gbzjf900g1&raw=1",
+    "zip_url": "https://www.dropbox.com/scl/fi/07csjulft9rf7mlpt8pii/90419.zip?rlkey=d6ethvjmstedt9u7ma6zwlvhp&dl=1"
   }
 ]
 
